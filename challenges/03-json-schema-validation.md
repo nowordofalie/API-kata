@@ -402,7 +402,7 @@ class UserValidationTest {
 - [Understanding JSON Schema](https://json-schema.org/understanding-json-schema/)
 - [networknt JSON Schema Validator](https://github.com/networknt/json-schema-validator)
 - [JSON Schema Validator](https://www.jsonschemavalidator.net/)
-- [JSON Schema Lint](https://jsonschemалint.com/)
+- [JSON Schema Lint](https://jsonschemalint.com/)
 
 ## ✅ Acceptance Criteria
 
