@@ -5,7 +5,7 @@ Welcome to the API Challenges collection! This folder contains a series of hands
 ## 🎯 Challenge Topics
 
 This collection covers:
-- **OpenAI API Integration** - Working with LLM APIs
+- **OpenAPI Specification Basics** - API design and documentation with OpenAPI
 - **Swagger/OpenAPI** - API documentation and contract-first development
 - **JSON Schema Validation** - Request/response payload validation
 - **API Filters & Query Parameters** - Advanced data filtering and searching
@@ -13,11 +13,11 @@ This collection covers:
 
 ## 📚 Challenge List
 
-1. [OpenAI API Integration](./01-openai-integration.md) - Integrate OpenAI APIs into a Kotlin application
+1. [OpenAPI Specification Basics](./01-openapi-basics.md) - Learn OpenAPI specification and contract-first API development
 2. [Swagger/OpenAPI Documentation](./02-swagger-openapi.md) - Document APIs using OpenAPI specification
 3. [JSON Schema Validation](./03-json-schema-validation.md) - Validate request payloads with JSON Schema
 4. [API Filters & Query Parameters](./04-api-filters.md) - Implement advanced filtering and pagination
-5. [Advanced Combined Challenge](./05-advanced-challenge.md) - Build a complete AI-powered API
+5. [Advanced Combined Challenge](./05-advanced-challenge.md) - Build a complete, well-documented API
 
 ## 🛠️ Prerequisites
 
