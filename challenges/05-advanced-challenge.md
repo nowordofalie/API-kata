@@ -1,7 +1,7 @@
-# Challenge 5: Advanced Combined Challenge - AI-Powered Content API
+# Challenge 5: Advanced Combined Challenge - Content Management API
 
 ## 🎯 Objective
-Build a complete AI-powered content management API that combines all previous challenges: OpenAI integration, Swagger documentation, JSON schema validation, and advanced filtering.
+Build a complete content management API that combines all previous challenges: comprehensive OpenAPI documentation, JSON schema validation, and advanced filtering. Focus on best practices for API design, documentation, and implementation.
 
 ## 📖 Learning Goals
 - Integrate multiple API patterns in a cohesive system
@@ -12,89 +12,112 @@ Build a complete AI-powered content management API that combines all previous ch
 
 ## 🔧 Requirements
 
-Build a **Content Generation & Management Platform** with the following features:
+Build a **Content Management & Publishing Platform** with the following features:
 
 ### 1. System Overview
 
 Create an API that:
-1. Generates content using OpenAI
-2. Stores and manages generated content
+1. Manages articles, blog posts, and other content
+2. Stores and retrieves content with rich metadata
 3. Provides advanced search and filtering
 4. Validates all requests with JSON schemas
-5. Documents everything with Swagger/OpenAPI
+5. Documents everything comprehensively with OpenAPI specification
 
 ### 2. Core Features
 
-#### Feature 1: AI Content Generation
+#### Feature 1: Content Creation and Management
 
-**POST /api/content/generate**
+**POST /api/content/create**
 
-Generate content using OpenAI with customizable parameters:
+Create new content with rich metadata and validation:
 
 ```json
 Request:
 {
-  "prompt": "Write a blog post about Kotlin coroutines",
+  "title": "Understanding Kotlin Coroutines",
+  "body": "Kotlin coroutines are a powerful feature...",
   "contentType": "blog_post",
-  "tone": "professional",
-  "length": "medium",
-  "keywords": ["kotlin", "coroutines", "async"],
-  "targetAudience": "developers",
-  "temperature": 0.7,
-  "includeMetadata": true
+  "author": {
+    "name": "Jane Developer",
+    "email": "jane@example.com"
+  },
+  "tags": ["kotlin", "coroutines", "async"],
+  "category": "programming",
+  "metadata": {
+    "seoTitle": "Kotlin Coroutines Guide",
+    "seoDescription": "A comprehensive guide to Kotlin coroutines",
+    "keywords": ["kotlin", "coroutines", "programming"]
+  },
+  "publishDate": "2024-01-15T10:30:00Z",
+  "status": "draft"
 }
 
 Response:
 {
   "id": "cnt-abc123",
-  "generatedContent": "Kotlin coroutines are...",
+  "title": "Understanding Kotlin Coroutines",
+  "body": "Kotlin coroutines are a powerful feature...",
+  "contentType": "blog_post",
+  "author": {
+    "name": "Jane Developer",
+    "email": "jane@example.com"
+  },
+  "tags": ["kotlin", "coroutines", "async"],
+  "category": "programming",
   "metadata": {
-    "title": "Understanding Kotlin Coroutines",
-    "summary": "A comprehensive guide...",
-    "suggestedTags": ["kotlin", "coroutines", "programming"],
-    "readTimeMinutes": 8,
-    "sentiment": "neutral"
+    "seoTitle": "Kotlin Coroutines Guide",
+    "seoDescription": "A comprehensive guide to Kotlin coroutines",
+    "keywords": ["kotlin", "coroutines", "programming"],
+    "wordCount": 1250,
+    "readTimeMinutes": 6
   },
-  "usage": {
-    "promptTokens": 25,
-    "completionTokens": 500,
-    "totalTokens": 525,
-    "estimatedCost": 0.0105
-  },
-  "generatedAt": "2024-01-15T10:30:00Z"
+  "publishDate": "2024-01-15T10:30:00Z",
+  "status": "draft",
+  "createdAt": "2024-01-15T10:30:00Z",
+  "updatedAt": "2024-01-15T10:30:00Z"
 }
 ```
 
-**JSON Schema for Content Generation:**
+**JSON Schema for Content Creation:**
 ```json
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
-  "required": ["prompt", "contentType"],
+  "required": ["title", "body", "contentType", "author"],
   "properties": {
-    "prompt": {
+    "title": {
       "type": "string",
-      "minLength": 10,
-      "maxLength": 2000,
-      "description": "The prompt for content generation"
+      "minLength": 5,
+      "maxLength": 200,
+      "description": "The title of the content"
+    },
+    "body": {
+      "type": "string",
+      "minLength": 50,
+      "maxLength": 50000,
+      "description": "The main content body"
     },
     "contentType": {
       "type": "string",
-      "enum": ["blog_post", "social_media", "email", "description", "summary", "article"],
-      "description": "Type of content to generate"
+      "enum": ["blog_post", "article", "tutorial", "documentation", "news"],
+      "description": "Type of content"
     },
-    "tone": {
-      "type": "string",
-      "enum": ["professional", "casual", "friendly", "formal", "humorous", "educational"],
-      "default": "professional"
+    "author": {
+      "type": "object",
+      "required": ["name", "email"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        }
+      }
     },
-    "length": {
-      "type": "string",
-      "enum": ["short", "medium", "long"],
-      "default": "medium",
-      "description": "Desired content length"
-    },
-    "keywords": {
+    "tags": {
       "type": "array",
       "items": {
         "type": "string",
@@ -105,19 +128,14 @@ Response:
       "maxItems": 10,
       "uniqueItems": true
     },
-    "targetAudience": {
+    "category": {
       "type": "string",
-      "maxLength": 100
+      "maxLength": 50
     },
-    "temperature": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 2,
-      "default": 0.7
-    },
-    "includeMetadata": {
-      "type": "boolean",
-      "default": true
+    "status": {
+      "type": "string",
+      "enum": ["draft", "published", "archived"],
+      "default": "draft"
     }
   }
 }
@@ -131,14 +149,16 @@ Response:
 ```
 Query Parameters:
 - contentType: Filter by type
-- tone: Filter by tone
+- category: Filter by category
 - tags: Filter by tags (comma-separated)
-- minLength: Minimum word count
-- maxLength: Maximum word count
-- generatedAfter: Date filter
-- generatedBefore: Date filter
-- search: Full-text search in content
-- sortBy: title, generatedAt, wordCount, etc.
+- author: Filter by author email
+- status: Filter by status (draft, published, archived)
+- minWordCount: Minimum word count
+- maxWordCount: Maximum word count
+- createdAfter: Date filter
+- createdBefore: Date filter
+- search: Full-text search in title and body
+- sortBy: title, createdAt, updatedAt, wordCount, etc.
 - sortOrder: asc, desc
 - page: Page number
 - size: Page size
@@ -150,64 +170,59 @@ Query Parameters:
 ```json
 {
   "title": "Updated Title",
-  "content": "Updated content...",
+  "body": "Updated content...",
   "tags": ["kotlin", "updated"],
-  "published": true
+  "status": "published"
 }
 ```
 
 **DELETE /api/content/{id}** - Delete content
 
-**POST /api/content/{id}/regenerate** - Regenerate content with new parameters
+**POST /api/content/{id}/duplicate** - Duplicate content with new ID
 
-#### Feature 3: Content Analysis
+#### Feature 3: Content Statistics and Analytics
 
-**POST /api/content/analyze**
+**GET /api/content/{id}/stats**
 
-Analyze existing content using AI:
+Get statistics for a specific content item:
 ```json
-Request:
-{
-  "content": "Your text content here...",
-  "analysisTypes": ["sentiment", "keywords", "summary", "readability"]
-}
-
 Response:
 {
-  "sentiment": {
-    "score": 0.7,
-    "label": "positive"
+  "views": 1523,
+  "uniqueVisitors": 892,
+  "averageReadTime": 4.2,
+  "shares": {
+    "twitter": 45,
+    "linkedin": 23,
+    "facebook": 12
   },
-  "keywords": ["kotlin", "programming", "async"],
-  "summary": "This content discusses...",
-  "readability": {
-    "score": 75,
-    "grade": "college",
-    "readTimeMinutes": 5
-  },
-  "wordCount": 850,
-  "characterCount": 4523
+  "engagement": {
+    "likes": 156,
+    "comments": 23,
+    "bookmarks": 67
+  }
 }
 ```
 
 #### Feature 4: Batch Operations
 
-**POST /api/content/batch/generate**
+**POST /api/content/batch/create**
 
-Generate multiple pieces of content in one request:
+Create multiple pieces of content in one request:
 ```json
 {
-  "requests": [
+  "contents": [
     {
-      "prompt": "First prompt...",
-      "contentType": "blog_post"
+      "title": "First Article",
+      "body": "Content for first article...",
+      "contentType": "article"
     },
     {
-      "prompt": "Second prompt...",
-      "contentType": "social_media"
+      "title": "Second Article",
+      "body": "Content for second article...",
+      "contentType": "blog_post"
     }
-  ],
-  "parallel": true
+  ]
 }
 ```
 
@@ -217,78 +232,68 @@ Generate multiple pieces of content in one request:
 data class Content(
     val id: String,
     val title: String,
-    val content: String,
+    val body: String,
     val contentType: ContentType,
-    val tone: Tone,
+    val author: Author,
+    val category: String?,
     val tags: List<String>,
     val metadata: ContentMetadata,
-    val generationParams: GenerationParams,
-    val usage: TokenUsage,
-    val published: Boolean,
-    val generatedAt: Instant,
-    val updatedAt: Instant,
-    val userId: String
+    val status: ContentStatus,
+    val publishDate: Instant?,
+    val createdAt: Instant,
+    val updatedAt: Instant
 )
 
 enum class ContentType {
-    BLOG_POST, SOCIAL_MEDIA, EMAIL, DESCRIPTION, SUMMARY, ARTICLE
+    BLOG_POST, ARTICLE, TUTORIAL, DOCUMENTATION, NEWS
 }
 
-enum class Tone {
-    PROFESSIONAL, CASUAL, FRIENDLY, FORMAL, HUMOROUS, EDUCATIONAL
+enum class ContentStatus {
+    DRAFT, PUBLISHED, ARCHIVED
 }
+
+data class Author(
+    val name: String,
+    val email: String,
+    val bio: String?
+)
 
 data class ContentMetadata(
     val wordCount: Int,
     val characterCount: Int,
     val readTimeMinutes: Int,
-    val sentiment: Sentiment?,
-    val suggestedTags: List<String>
-)
-
-data class Sentiment(
-    val score: Double,
-    val label: String
-)
-
-data class GenerationParams(
-    val prompt: String,
-    val temperature: Double,
-    val keywords: List<String>,
-    val targetAudience: String?
-)
-
-data class TokenUsage(
-    val promptTokens: Int,
-    val completionTokens: Int,
-    val totalTokens: Int,
-    val estimatedCost: Double
+    val seoTitle: String?,
+    val seoDescription: String?,
+    val keywords: List<String>
 )
 ```
 
 ### 4. Implementation Requirements
 
-#### OpenAI Integration
-- Create a service layer for OpenAI API calls
-- Implement proper error handling and retries
-- Add rate limiting and quota management
-- Cache similar prompts to reduce API costs
-- Track token usage and costs
+#### OpenAPI Documentation
+- Create comprehensive OpenAPI 3.0+ specification
+- Document all endpoints with detailed descriptions
+- Include request/response examples for all operations
+- Define reusable schemas and components
+- Document authentication requirements
+- Specify all error responses
+- Make OpenAPI spec available at `/openapi.json` or `/openapi.yaml`
+- Serve interactive documentation via Swagger UI at `/swagger-ui`
 
 #### JSON Schema Validation
 - Create schemas for all POST/PUT endpoints
-- Validate content generation requests
+- Validate content creation requests
 - Validate content update requests
 - Validate batch operation requests
-- Return detailed validation errors
+- Return detailed validation errors with field-level feedback
 
-#### Swagger Documentation
-- Document all endpoints with OpenAPI 3.0
-- Include request/response examples
-- Document all query parameters
-- Add authentication requirements
-- Include error response schemas
-- Make Swagger UI available at `/swagger-ui`
+#### Swagger/OpenAPI Best Practices
+- Use $ref to avoid duplication
+- Define reusable components (schemas, responses, parameters)
+- Include comprehensive examples
+- Use proper HTTP status codes
+- Document rate limiting headers
+- Include OpenAPI extensions where appropriate
 
 #### Advanced Filtering
 - Implement full-text search
@@ -309,24 +314,24 @@ data class TokenUsage(
 ```yaml
 openapi: 3.0.0
 info:
-  title: AI-Powered Content API
+  title: Content Management API
   version: 1.0.0
   description: |
-    A comprehensive API for generating and managing AI-powered content.
+    A comprehensive API for managing content with advanced features.
     
     Features:
-    - AI content generation using OpenAI
+    - Content creation and management
     - Advanced content filtering and search
     - JSON schema validation
     - Batch operations
-    - Content analysis
+    - Content analytics and statistics
 
 paths:
-  /api/content/generate:
+  /api/content/create:
     post:
-      summary: Generate new content using AI
+      summary: Create new content
       tags:
-        - Content Generation
+        - Content Management
       security:
         - BearerAuth: []
       requestBody:
@@ -334,22 +339,24 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ContentGenerationRequest'
+              $ref: '#/components/schemas/ContentCreationRequest'
             examples:
               blogPost:
-                summary: Generate a blog post
+                summary: Create a blog post
                 value:
-                  prompt: "Write about Kotlin coroutines"
+                  title: "Understanding Kotlin Coroutines"
+                  body: "Kotlin coroutines are..."
                   contentType: "blog_post"
-                  tone: "professional"
-                  length: "medium"
+                  author:
+                    name: "Jane Developer"
+                    email: "jane@example.com"
       responses:
         '201':
-          description: Content generated successfully
+          description: Content created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GeneratedContent'
+                $ref: '#/components/schemas/Content'
         '400':
           description: Invalid request
           content:
@@ -371,16 +378,16 @@ components:
 
 ## 🎁 Bonus Tasks
 
-1. **WebSocket Support**: Real-time content generation progress
-2. **Content Versioning**: Track content changes over time
-3. **Content Templates**: Reusable generation templates
-4. **Multi-language Support**: Generate content in multiple languages
-5. **Content Scheduling**: Schedule content generation
-6. **AI Model Selection**: Support multiple AI providers
-7. **Content Collaboration**: Multiple users editing same content
-8. **Export Formats**: Export content in various formats (PDF, Markdown, HTML)
-9. **SEO Optimization**: Analyze and optimize for SEO
-10. **Content Recommendations**: AI-powered content suggestions
+1. **WebSocket Support**: Real-time content updates and notifications
+2. **Content Versioning**: Track content changes over time with full revision history
+3. **Content Templates**: Reusable content templates with variable substitution
+4. **Multi-language Support**: Content localization and internationalization
+5. **Content Scheduling**: Schedule content publication and archival
+6. **Media Management**: Handle images, videos, and other media assets
+7. **Content Collaboration**: Multiple users editing same content with conflict resolution
+8. **Export Formats**: Export content in various formats (PDF, Markdown, HTML, ePub)
+9. **SEO Optimization**: Analyze and optimize content for search engines
+10. **Content Recommendations**: Related content suggestions based on tags and categories
 
 ## 📦 Required Dependencies
 
@@ -397,7 +404,7 @@ dependencies {
     implementation("io.ktor:ktor-server-openapi:2.3.0")
     implementation("io.ktor:ktor-server-swagger:2.3.0")
     
-    // HTTP Client for OpenAI
+    // HTTP Client for external APIs (if needed)
     implementation("io.ktor:ktor-client-core:2.3.0")
     implementation("io.ktor:ktor-client-cio:2.3.0")
     implementation("io.ktor:ktor-client-content-negotiation:2.3.0")
@@ -432,10 +439,10 @@ dependencies {
 Comprehensive test coverage:
 
 1. **Unit Tests**:
-   - OpenAI service methods
+   - Content service methods
    - Validation logic
    - Filter builders
-   - Content analysis
+   - Content metadata calculation
 
 2. **Integration Tests**:
    - End-to-end API flows
@@ -453,6 +460,11 @@ Comprehensive test coverage:
    - Response time benchmarks
    - Database query optimization
 
+5. **OpenAPI Contract Tests**:
+   - Validate implementation matches OpenAPI spec
+   - Ensure all documented endpoints exist
+   - Verify response schemas match specification
+
 ## 📚 Resources
 
 All resources from previous challenges, plus:
@@ -463,9 +475,10 @@ All resources from previous challenges, plus:
 ## ✅ Acceptance Criteria
 
 - [ ] All features are implemented and working
-- [ ] OpenAI integration is functional with error handling
+- [ ] Content management operations are functional with proper error handling
 - [ ] All requests are validated with JSON schemas
-- [ ] Complete Swagger documentation is available
+- [ ] Complete OpenAPI documentation is available and accurate
+- [ ] Swagger UI is accessible and functional
 - [ ] Advanced filtering works with all combinations
 - [ ] Authentication and authorization are implemented
 - [ ] Rate limiting is in place
@@ -475,6 +488,7 @@ All resources from previous challenges, plus:
 - [ ] Error handling covers all scenarios
 - [ ] Code follows Kotlin best practices
 - [ ] Database migrations are managed properly
+- [ ] OpenAPI specification validates successfully
 
 ## 💭 Final Reflection
 
@@ -485,14 +499,14 @@ After completing this challenge, reflect on:
 4. How would you monitor and maintain this in production?
 5. What would you do differently if starting from scratch?
 6. How would you handle API versioning as features evolve?
-7. What's the best approach to cost optimization with AI APIs?
+7. What's the best approach to maintaining OpenAPI documentation as the API evolves?
+8. How do you ensure the implementation stays in sync with the OpenAPI specification?
 
 ## 🎉 Congratulations!
 
 If you've completed this challenge, you've built a sophisticated, production-ready API that combines:
-- AI/ML integration
+- Comprehensive OpenAPI documentation
 - Schema validation
-- Comprehensive documentation
 - Advanced query capabilities
 - Industry best practices
 
